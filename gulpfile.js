@@ -2,7 +2,7 @@
 var gulp = require('gulp');
 
 //guip flow control
-var gilpif = require('gulp-if');
+var gulpif = require('gulp-if');
 var sync = require('gulp-sync')(gulp);
 //build tools
 var del = require('del');
@@ -130,7 +130,31 @@ gulp.task("run",["build", "browserSync"], function (){
   gulp.watch(cfg.css.src,["css"]);
 });
 
+//gulp.task("dist:html", function(){
+//  return gulp.src(cfg.html.src).pipe(debug())
+//    .pipe
+//})
+gulp.task("dist:assets",["build"], function(){
+  return gulp.src(cfg.root_html.src).pipe(debug())
+    .pipe(useref({ searchPath: devResourcePath}))
+    .pipe(gulpif(["**/*constant.js"], replace(cfg.apiUrl.dev,cfg.apiUrl.prd)))
+    .pipe(gulpif(["**/*.js"],uglify()))
+    .pipe(gulpif(["**/*.css"],cssMin()))
+    .pipe(gulp.dest(distPath)).pipe(debug());
+});
+
+gulp.task("dist:fonts", function(){
+  return gulp.src(cfg.vendor_fonts.bld + "/**/*", {base: cfg.vendor_css.bld})
+    .pipe(gulp.dest(distPath));
+});
+
 gulp.task("dist:html", function(){
   return gulp.src(cfg.html.src).pipe(debug())
-    .pipe 
-})
+    .pipe(htmlMin({collapseWhitespace: true}))
+    .pipe(gulp.dest(distPath)).pipe(debug());
+});
+
+gulp.task("dist", sync.sync(["clean:dist","build","dist:assets","dist:fonts","dist:html"]));
+gulp.task("dist:run",["dist"], function(){
+  browserSyncInit(distPath);
+});
