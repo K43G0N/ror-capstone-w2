@@ -40,7 +40,7 @@ var cfg = {
   bootstrap_fonts: { src: bowerPath + "/bootstrap-sass/assets/fonts/**/*"},
   //vendor js src globs
   jquery:            { src: bowerPath + "/jquery2/jquery.js" },
-  bootstrap_js:      { src: bowerPath + "/bootstrap-sass/assets/javascript/bootstrap.js"},
+  bootstrap_js:      { src: bowerPath + "/bootstrap-sass/assets/javascripts/bootstrap.js"},
   angular:           { src: bowerPath + "/angular/angular.js" },
   angular_ui_router: { src: bowerPath + "/angular-ui-router/release/angular-ui-router.js"},
   angular_resource:  { src: bowerPath + "/angular-resource/angular-resource.js"},
@@ -148,8 +148,14 @@ gulp.task("dist:fonts", function(){
     .pipe(gulp.dest(distPath));
 });
 
+// gulp.task("dist:html", function(){
+//   return gulp.src(cfg.html.src).pipe(debug())
+//     .pipe(htmlMin({collapseWhitespace: true}))
+//     .pipe(gulp.dest(distPath)).pipe(debug());
+// });
+
 gulp.task("dist:html", function(){
-  return gulp.src(cfg.html.src).pipe(debug())
+  return gulp.src(cfg.html.src , {base: srcPath+"/javascripts"}).pipe(debug())
     .pipe(htmlMin({collapseWhitespace: true}))
     .pipe(gulp.dest(distPath)).pipe(debug());
 });
